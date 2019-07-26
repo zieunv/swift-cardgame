@@ -13,10 +13,11 @@ protocol OutputViewPrintable {
 }
 
 class CardGame: OutputViewPrintable {
-    private var players = [Player]()
+    private var players = [PokerPlayer]()
     private var dealer: Dealer
     private let gameMode: CardGameMode
     private let numberOfPlayers: Int
+    
     
     func printPlayerInfo(handler: (String, String) -> ()) {
         players.forEach { player in handler(player.name, String(describing: player.hand))}
@@ -28,29 +29,29 @@ class CardGame: OutputViewPrintable {
         self.numberOfPlayers = numberOfPlayers
     }
     
-    func continueGame() -> Bool {
-        let numberOfCards = gameMode.numberOfCards
-        let requirement = numberOfCards * (numberOfPlayers + 1)
-        return dealer.haveCards(requirement: requirement)
-    }
-    
-    func reset() {
-        self.players.forEach{$0.hand.clear()}
-    }
-    
     func gameStart() {
         guard continueGame() else { return }
         reset()
         setPlayer()
         setCards()
     }
-  
+    
+    func continueGame() -> Bool {
+        let numberOfCards = gameMode.numberOfCards
+        let requirement = numberOfCards * (numberOfPlayers + 1)
+        return dealer.haveCards(requirement: requirement)
+    }
+    
+    private func reset() {
+        self.players.forEach{$0.hand.clear()}
+    }
+    
     private func setPlayer() {
         players.removeAll()
         for order in 1...self.numberOfPlayers {
-            players.append(PokerPlayer(number: order))
+            players.append(PokerPlayer(number: order, name: "참가자"))
         }
-        players.append(dealer)
+        players.append(dealer as! PokerPlayer)
     }
     
     private func setCards() {

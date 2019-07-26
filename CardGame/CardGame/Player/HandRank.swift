@@ -8,13 +8,8 @@
 
 import Foundation
 
-enum HandRank: Double {
-    case highcard = 0
-    case onePair = 2
-    case twoPair = 2.5
-    case triple = 3.0
-    case straight = 3.5
-    case fourcard = 4
+enum HandRank: Int {
+    case highcard, onePair, twoPair, triple, straight, quads
 }
 
 extension HandRank: Comparable {
