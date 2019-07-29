@@ -15,8 +15,8 @@ struct OutputView {
         }
     }
     
-    static func printResultPlayer(name: CardGame) {
-        print("이번 승자는 \(name.setWinner().name)입니다.")
+    static func printResultPlayer(game: CardGame) {
+        print("이번 승자는 \(game.winner().name)입니다.")
     }
     
     static func printError(_ description: String) {

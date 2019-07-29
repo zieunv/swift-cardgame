@@ -8,11 +8,11 @@
 
 import Foundation
 
-class PokerPlayer: Player {
+class PokerPlayer: Player, Comparable {
     
-    private(set) var hand = Hand()
-    private(set) var name: String
-    private let number: Int
+    var hand = Hand()
+    var name: String
+    let number: Int
     
     init(number: Int, name: String) {
         self.number = number
@@ -26,5 +26,24 @@ class PokerPlayer: Player {
     func clearHand() {
         self.hand.clear()
     }
+    
+    func handRank() -> (HandRank, Int) {
+        return hand.makeHandRank()
+    }
+    
+    static func < (lhs: PokerPlayer, rhs: PokerPlayer) -> Bool {
+        if (lhs.handRank().0 != rhs.handRank().0){
+            return lhs.handRank().0 < rhs.handRank().0
+        } else {
+        return lhs.handRank().1 < lhs.handRank().1
+        }
+    }
+    
+    static func == (lhs: PokerPlayer, rhs: PokerPlayer) -> Bool {
+        if (lhs.handRank().0 == rhs.handRank().0) {
+            return lhs.handRank().1 == rhs.handRank().1
+        } else {
+            return false
+        }
+    }
 }
-
