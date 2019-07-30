@@ -21,25 +21,25 @@ class Hand: CustomStringConvertible {
     }
     
     func makeHandRank() -> (HandRank, Int) {
-        let cardCount = cards.reduce([Card.Ranks: Int](), { (cardCount: [Card.Ranks: Int], card: Card) -> [Card.Ranks: Int] in
-            var cardCount = cardCount
-            cardCount[card.rank] = (cardCount[card.rank] ?? 0) + 1
-            return cardCount
+        let countedHands = cards.reduce([Card.Rank: Int](), { (countedHands: [Card.Rank: Int], card: Card) -> [Card.Rank: Int] in
+            var countedHands = countedHands
+            countedHands[card.getRank()] = (countedHands[card.getRank()] ?? 0) + 1
+            return countedHands
         })
         
-        let quadCards = cardCount.filter{ $0.value == 4 }
+        let quadCards = countedHands.filter{ $0.value == 4 }
         for (key,value) in quadCards {
             if value == 4 {
-                return (HandRank.quads,key.rawValue)
+                return (HandRank.quads, key.rawValue)
             }
         }
         
-        let result = isStraight()
+        let result = isStraight(cardCount: countedHands)
         if result.0 {
             return (HandRank.straight, result.1)
         }
         
-        let tripleCards = cardCount.filter { $0.value == 3 }
+        let tripleCards = countedHands.filter { $0.value == 3 }
         for (key,value) in tripleCards {
             if value == 3 {
                 return (HandRank.triple, key.rawValue)
@@ -47,14 +47,10 @@ class Hand: CustomStringConvertible {
         }
         
         var max = 0
-        let anotherCards = cardCount.filter { $0.value == 2 }
+        let anotherCards = countedHands.filter { $0.value == 2 }
         if anotherCards.count >= 2 {
-            for (key,value) in anotherCards {
-                if value == 2 {
-                    if max < key.rawValue {
-                        max = key.rawValue
-                    }
-                }
+            for (key,_) in anotherCards {
+               max = max < key.rawValue ? key.rawValue : max
             }
             return (HandRank.twoPair, max)
         }
@@ -70,12 +66,7 @@ class Hand: CustomStringConvertible {
     }
     
     
-    private func isStraight() -> (Bool, Int) {
-        let cardCount = cards.reduce([Card.Ranks: Int](), { (cardCount: [Card.Ranks: Int], card: Card) -> [Card.Ranks: Int] in
-            var cardCount = cardCount
-            cardCount[card.rank] = (cardCount[card.rank] ?? 0) + 1
-            return cardCount
-        })
+    private func isStraight(cardCount: [Card.Rank : Int] ) -> (Bool, Int) {
         let cardSortValue = cardCount.sorted(by: { $0.0.rawValue < $1.0.rawValue })
         for index in stride(from: cardSortValue.count - 1, to: 0, by: -1) {
             let rank1 = cardSortValue[index].0.rawValue
